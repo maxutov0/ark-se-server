@@ -1,0 +1,13 @@
+[Unit]
+Description=ARK: Survival Evolved Dedicated Server
+After=network.target
+
+[Service]
+User=ark
+WorkingDirectory=${ARK_SERVER_DIR}
+ExecStart=${ARK_SERVER_DIR}/ShooterGame/Binaries/Linux/ShooterGameServer ${ARK_MAP}?listen?SessionName=${ARK_SERVER_NAME}?ServerPassword=${ARK_SERVER_PASSWORD}?ServerAdminPassword=${ARK_ADMIN_PASSWORD} -server -log
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
