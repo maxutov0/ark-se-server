@@ -21,3 +21,5 @@ ShooterGame/Binaries
 ShooterGame/Config
 ShooterGame/Content
 ShooterGame/ShooterGame.uproject
+ShooterGame/Logs/
+ShooterGame/CleanSourceConfigs/
