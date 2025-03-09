@@ -54,10 +54,52 @@ if [ ! -f /usr/games/steamcmd ]; then
     check_success "Не удалось создать символическую ссылку для steamcmd."
 fi
 
-# Установка ARK через steamcmd
-log "Установка ARK через steamcmd..."
-steamcmd +force_install_dir "$ARK_DIR" +login anonymous +app_update "$STEAM_APP_ID" +quit
-check_success "Не удалось установить ARK через steamcmd."
+# Создание и настройка swap-файла
+SWAP_SIZE="4G"
+SWAP_FILE="/swapfile"
+
+log "Проверка, существует ли swap-файл..."
+if swapon --show | grep -q "$SWAP_FILE"; then
+    log "Swap-файл уже существует и активирован."
+else
+    log "Создание swap-файла размером $SWAP_SIZE..."
+    sudo fallocate -l "$SWAP_SIZE" "$SWAP_FILE" || sudo dd if=/dev/zero of="$SWAP_FILE" bs=1G count=4
+    check_success "Не удалось создать swap-файл."
+
+    log "Настройка прав доступа для swap-файла..."
+    sudo chmod 600 "$SWAP_FILE"
+    check_success "Не удалось настроить права доступа для swap-файла."
+
+    log "Настройка swap-файла..."
+    sudo mkswap "$SWAP_FILE"
+    check_success "Не удалось настроить swap-файл."
+
+    log "Активация swap..."
+    sudo swapon "$SWAP_FILE"
+    check_success "Не удалось активировать swap."
+
+    log "Добавление swap в /etc/fstab для автоматической загрузки при перезагрузке..."
+    if ! grep -q "$SWAP_FILE" /etc/fstab; then
+        echo "$SWAP_FILE none swap sw 0 0" | sudo tee -a /etc/fstab
+        check_success "Не удалось добавить swap в /etc/fstab."
+    else
+        log "Swap уже добавлен в /etc/fstab."
+    fi
+
+    log "Настройка swappiness на 10..."
+    sudo sysctl vm.swappiness=10
+    check_success "Не удалось настроить swappiness."
+
+    log "Добавление swappiness в /etc/sysctl.conf для постоянного изменения..."
+    if ! grep -q "vm.swappiness=10" /etc/sysctl.conf; then
+        echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
+        check_success "Не удалось добавить swappiness в /etc/sysctl.conf."
+    else
+        log "Swappiness уже добавлен в /etc/sysctl.conf."
+    fi
+
+    log "Swap успешно настроен."
+fi
 
 # Настройка лимита открытых файлов
 log "Настройка лимита открытых файлов..."
@@ -83,5 +125,10 @@ echo "session required pam_limits.so" | sudo tee -a /etc/pam.d/common-session > 
 check_success "Не удалось добавить pam_limits.so в /etc/pam.d/common-session."
 
 log "Настройка лимита открытых файлов завершена."
+
+# Установка ARK через steamcmd
+log "Установка ARK через steamcmd..."
+steamcmd +force_install_dir "$ARK_DIR" +login anonymous +app_update "$STEAM_APP_ID" +quit
+check_success "Не удалось установить ARK через steamcmd."
 
 log "Установка ARK сервера завершена успешно!"
