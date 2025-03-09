@@ -21,7 +21,7 @@ ShooterGame/Binaries
 ShooterGame/Config
 ShooterGame/Content
 ShooterGame/ShooterGame.uproject
-ShooterGame/Logs/
+ShooterGame/Logs/*
 ShooterGame/CleanSourceConfigs/
 
 .DS_Store
