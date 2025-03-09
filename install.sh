@@ -128,7 +128,7 @@ log "Настройка лимита открытых файлов заверш�
 
 # Установка ARK через steamcmd
 log "Установка ARK через steamcmd..."
-steamcmd +force_install_dir "$ARK_DIR" +login anonymous +app_update "$STEAM_APP_ID" +quit
+steamcmd +force_install_dir "$HOME/ark-se-server" +login anonymous +app_update "$STEAM_APP_ID" +quit
 check_success "Не удалось установить ARK через steamcmd."
 
 log "Установка ARK сервера завершена успешно!"
