@@ -23,3 +23,5 @@ ShooterGame/Content
 ShooterGame/ShooterGame.uproject
 ShooterGame/Logs/
 ShooterGame/CleanSourceConfigs/
+
+.DS_Store
